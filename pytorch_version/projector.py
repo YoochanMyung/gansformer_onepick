@@ -1,13 +1,10 @@
 # Adapted Pbaylies Projector to Gansformer 1D Latent Vector component
 
-"""Project given image to the latent space of pretrained network pickle."""
-
 import copy
 import os
 from time import perf_counter
 
 import click
-import imageio
 import numpy as np
 import PIL.Image
 from PIL import ImageFilter
@@ -247,22 +244,12 @@ def project(
                 buf *= buf.square().mean().rsqrt()
     return w_out
 
-#----------------------------------------------------------------------------
 
 @click.command()
 @click.option('--network', 'network_pkl', help='Network pickle filename', required=True)
 @click.option('--target-image', 'target_fname', help='Target image file to project to', required=False, metavar='FILE', default=None)
-# @click.option('--target-text',            help='Target text to project to', required=False, default=None)
-# @click.option('--initial-latent',         help='Initial latent', default=None)
-# @click.option('--lr',                     help='Learning rate', type=float, default=0.1, show_default=True)
 @click.option('--num-steps',              help='Number of optimization steps', type=int, default=1000, show_default=True)
 @click.option('--outdir',                 help='Where to save the output images', required=True, metavar='DIR')
-# @click.option('--use-vgg',                help='Use VGG16 in the loss', type=bool, default=True, show_default=True)
-# @click.option('--use-clip',               help='Use CLIP in the loss', type=bool, default=True, show_default=True)
-# @click.option('--use-pixel',              help='Use L1/L2 distance on pixels in the loss', type=bool, default=True, show_default=True)
-# @click.option('--use-penalty',            help='Use a penalty on latent values distance from the mean in the loss', type=bool, default=True, show_default=True)
-# @click.option('--use-center',            help='Optimize against an additional center image crop', type=bool, default=True, show_default=True)
-# @click.option('--use-kmeans',            help='Perform kmeans clustering for selecting initial latents', type=bool, default=True, show_default=True)
 def run_projection(
     network_pkl: str,
     target_fname: str,
@@ -325,11 +312,10 @@ def run_projection(
     PIL.Image.fromarray(synth_image, 'RGB').save(f'{outdir}/{os.path.basename(target_fname)[:-4]}_proj.png')
     np.savez(f'{outdir}/{os.path.basename(target_fname)[:-4]}_proj_w.npz', w=projected_w.unsqueeze(0).cpu().numpy())
 
-#----------------------------------------------------------------------------
-
-# if __name__ == "__main__":
-    # run_projection() # pylint: disable=no-value-for-parameter
+if __name__ == "__main__":
+    run_projection() # pylint: disable=no-value-for-parameter
     
-# For testing
-run_projection(["--network",'/home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl',"--target-image",'/home/ymyung/projects/src/gansformer/pytorch_version/cropped_jenny_1.png',"--outdir","/home/ymyung/projects/src/gansformer_onepick/pytorch_version"],standalone_mode=False)
-#----------------------------------------------------------------------------
+## For testing
+# run_projection(["--network",'/home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl',"--target-image",'/home/ymyung/projects/src/gansformer/pytorch_version/cropped_jenny_1.png',"--outdir","/home/ymyung/projects/src/gansformer_onepick/pytorch_version"],standalone_mode=False)
+
+# python projector.py --network /home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl --target-image /home/ymyung/projects/src/gansformer/pytorch_version/cropped_jenny_1.png --outdir ./test

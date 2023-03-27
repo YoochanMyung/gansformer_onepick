@@ -1,4 +1,3 @@
-# Generate images using pretrained network pickle.
 import os
 import numpy as np
 import PIL.Image
@@ -181,31 +180,42 @@ def main():
     parser = argparse.ArgumentParser(description = "Generate images with the GANformer")
     parser.add_argument("type_of_run",          help="Determine type of run", choices=['PS','PP','SS'])
     parser.add_argument("--model",              help="Filename for a snapshot to resume", type=str)
-    parser.add_argument("--seeds",              help="Comma-separated list of Seeds", type=str)
-    parser.add_argument("--w_vec",              help="Projection file(s)", type=str)
-    parser.add_argument("--beta",               help="Angle for shifting face", type=int)
+    parser.add_argument("--seeds",              help="Comma-separated list of Seeds", type=str, default='')
+    parser.add_argument("--w_vec",              help="Projection file(s)", type=str, default='')
+    parser.add_argument("--beta",               help="Angle for shifting face", type=int, default=0)
     parser.add_argument("--styles",             help="Style ratio", default="0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5",type=str)
-    parser.add_argument("--output-dir",         help="Root directory for experiments (default: %(default)s)", default="images", metavar="DIR")
+    parser.add_argument("--output-dir",         help="Root directory for experiments (default: %(default)s)", metavar="DIR", required=True)
     parser.add_argument("--truncation-psi",     help="Truncation Psi to be used in producing sample images (default: %(default)s)", default=0.7, type=float)
-    parser.add_argument("--hyperplane-path",    help="Location of Hyperplane model")
+    parser.add_argument("--hyperplane-path",    help="Location of Hyperplane model", required=True)
     parser.add_argument("--fixed_styles",       help="Fix Styles for latent column 10 to 18", action='store_true')
     parser.add_argument("--save_npz",           help="Save W vectors in npz", action='store_true')
 
     args, _ = parser.parse_known_args()
-    # For Testing #
-    args.model = '/home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl'
 
-    args.seeds = '3,7'
-    args.w_vec = '/home/ymyung/projects/src/gansformer/pytorch_version/test_proj_w.npz,/home/ymyung/projects/src/gansformer/pytorch_version/cropped_jenny_1_proj_w.npz'
-    args.hyperplane_path = '/home/ymyung/projects/src/gansformer/pytorch_version/hyperplane_pose_new.npz'
-    args.beta = 0
+    # For Testing #
+    # args.model = '/home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl'
+
+    # args.seeds = '3,7'
+    # args.w_vec = '/home/ymyung/projects/src/gansformer/pytorch_version/test_proj_w.npz,/home/ymyung/projects/src/gansformer/pytorch_version/cropped_jenny_1_proj_w.npz'
+    # args.hyperplane_path = '/home/ymyung/projects/src/gansformer/pytorch_version/hyperplane_pose_new.npz'
+    # args.beta = 0
     
-    args.styles = "0.7,0.8,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5"
+    # args.styles = "0.7,0.8,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5"
     # args.styles = "0,0,0,0,0,0,0,0,0,0"
     # args.styles = "1,1,1,1,1,1,1,1,1,1"
     
-    args.output_dir = '/home/ymyung/projects/src/gansformer/pytorch_version/test'
+    # args.output_dir = '/home/ymyung/projects/src/gansformer/pytorch_version/test'
     style_mix(**vars(args))
 
 if __name__ == "__main__":
     main()
+
+## TEST ##
+## PS
+# python style_mixing.py PS --model /home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl --seeds 3 --w_vec /home/ymyung/projects/src/gansformer/pytorch_version/test_proj_w.npz --beta 0 --styles "0.7,0.8,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5" --output-dir ./test/ --hyperplane-path /home/ymyung/projects/src/gansformer/pytorch_version/hyperplane_pose_new.npz
+
+## SS
+# python style_mixing.py SS --model /home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl --seeds 3,5 --beta 0 --styles "0.7,0.8,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5" --output-dir ./test/ --hyperplane-path /home/ymyung/projects/src/gansformer/pytorch_version/hyperplane_pose_new.npz
+
+## PP
+# python style_mixing.py PP --model /home/ymyung/projects/src/gansformer/pytorch_version/network-snapshot-003024.pkl --w_vec "/home/ymyung/projects/src/gansformer/pytorch_version/test_proj_w.npz,/home/ymyung/projects/src/gansformer/pytorch_version/cropped_jenny_1_proj_w.npz" --beta 0 --styles "0.7,0.8,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5" --output-dir ./test/ --hyperplane-path /home/ymyung/projects/src/gansformer/pytorch_version/hyperplane_pose_new.npz
